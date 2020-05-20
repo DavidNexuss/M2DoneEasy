@@ -1,10 +1,19 @@
 from sympy import *
+from sympy.vector import CoordSys3D, Del
+
+x0 = Symbol('x0')
+x1 = Symbol('x1')
+x2 = Symbol('x2')
+x3 = Symbol('x3')
+x4 = Symbol('x4')
 
 x = Symbol('x')
 y = Symbol('y')
 z = Symbol('z')
 k = Symbol('k')
 c = Symbol('c')
+R = CoordSys3D('R')
+delop = Del()
 init_printing()
 
 #Per utsar taylor es recomanable que la funció no utilitze fraccionaris
@@ -14,6 +23,50 @@ init_printing()
 #sympy la imprimeixi amb el format convencional
 #dels polinomis de taylor
 
+#def mul_subst(function,vector,variables):
+#    for x in vector:
+#        function = function.subs(x,
+#def taylor_mul(function,a,k):
+    
+def intersection_matrix(v,w):
+    v = v.row_join(v)
+    w = w.row_join(w * 0)
+    v = v.col_join(w)
+    return v
+def Zassenhaua(m):
+    cols = int(m.cols / 2)
+    rref = m.rref()
+    r = 0
+    for i in rref[1]:
+        if i < cols:
+            r = r + 1
+    for i in range(r):
+        rref[0].row_del(0)
+    for i in range(cols):
+        rref[0].col_del(0)
+    return rref[0]
+def Jacobian(functions,variables):
+    mat = []
+    for f in functions:
+        row = []
+        for v in variables:
+            row.append(f.diff(v))
+        mat.append(row)
+    return Matrix(mat)
+def Hessian(function,variables):
+
+    mat = []
+    for i in variables:
+        row = []
+        for j in variables:
+            row.append(function.diff(i).diff(j))
+        mat.append(row)
+    return Matrix(mat)
+def Gradient(function,variables):
+    row = []
+    for i in variables:
+        row.append(function.diff(i))
+    return Matrix(row)
 def taylor(function,x0,n,x = Symbol('x')):
     i = 0
     p = 0
@@ -93,4 +146,8 @@ def suc(f,x0,it,x = Symbol('x')):
         numbers.append(x0)
         it = it - 1
     return numbers
+
+#-----------------------------------------Algebra Lineal-------------------------------
+
+
 print("Benvingut/da a la biblioteca de funcions de M2 de +K linux UPC")
