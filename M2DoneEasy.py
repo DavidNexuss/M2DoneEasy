@@ -13,6 +13,24 @@ z = Symbol('z')
 k = Symbol('k')
 c = Symbol('c')
 R = CoordSys3D('R')
+
+a = Symbol('a')
+b = Symbol('b')
+c = Symbol('c')
+d = Symbol('d')
+e = Symbol('e')
+f = Symbol('f')
+
+auxiliars = [
+Symbol('a'),
+Symbol('b'),
+Symbol('c'),
+Symbol('d'),
+Symbol('e'),
+Symbol('f')
+]
+
+n = Symbol('n')
 delop = Del()
 init_printing()
 
@@ -27,12 +45,26 @@ init_printing()
 #    for x in vector:
 #        function = function.subs(x,
 #def taylor_mul(function,a,k):
-    
+
+def taylor_mul_1(f,a,b):
+    return f.subs(x,a).subs(y,b) + f.diff(x).subs(x,a).subs(y,b) * (x - a) + f.diff(y).subs(x,a).subs(y,b) * (y - b)
+def taylor_mul_2(f,a,b):
+    return taylor_mul_1(f,a,b) + (1/2)*(f.diff(x,2).subs(x,a).subs(y,b)*(x-a)**2 + 2*f.diff(x).diff(y).subs(x,a).subs(y,b)*(x-a)*(y-b)+ f.diff(y,2).subs(x,a).subs(y,b)*(y-b)**2)
+def mul_vector(a,b):
+    c = 0
+    for i in range(len(a)):
+        c += a[i] * b[i]
+    return c
+def restrict(F,restriction):
+    for i in range(len(restriction)):
+        F = F + auxiliars[i]*restriction[i]
+    return F
 def intersection_matrix(v,w):
     v = v.row_join(v)
     w = w.row_join(w * 0)
     v = v.col_join(w)
     return v
+#reuires the intersection matrix m of vector spaces v and w and computes its vector space intersection
 def Zassenhaua(m):
     cols = int(m.cols / 2)
     rref = m.rref()
@@ -62,12 +94,17 @@ def Hessian(function,variables):
             row.append(function.diff(i).diff(j))
         mat.append(row)
     return Matrix(mat)
-def Gradient(function,variables):
+def Gradient(p_function, variables = 0):
     row = []
+    if variables == 0:
+        variables = p_function.free_symbols
     for i in variables:
-        row.append(function.diff(i))
+        row.append(p_function.diff(i))
     return Matrix(row)
-def taylor(function,x0,n,x = Symbol('x')):
+def generic_taylor(f):
+    return Sum(f.diff((x,n)).subs(x,x0)/factorial(n) * (x - x0)**n,(n,0,n))
+
+def taylor(function,_x0,_n,x = Symbol('x')): 
     i = 0
     p = 0
     while i <= n:
@@ -150,4 +187,4 @@ def suc(f,x0,it,x = Symbol('x')):
 #-----------------------------------------Algebra Lineal-------------------------------
 
 
-print("Benvingut/da a la biblioteca de funcions de M2 de +K linux UPC")
+print("Benvingut/da a la biblioteca de funcions de M2 y M1 de +K linux UPC")
